@@ -14,6 +14,7 @@
   "dependencies": {
     "@google/genai": "^2.24.0",
     "@huggingface/inference": "^4.13.30",
+    "@vercel/functions": "^3.10.1",
     "cors": "^2.8.6",
     "dotenv": "^18.0.2",
     "express": "^5.2.1",

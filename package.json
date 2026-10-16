@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@neon/config": "^1.9.2",
+    "@neon/env": "^1.6.3"
+  },
+  "scripts": {
+    "build": "npm --prefix client run build && node --check server/src/server.js && node --check server/src/db.js && node --check server/src/routes/characters.js && node --check server/src/routes/generate.js"
+  }
+}
