@@ -24,7 +24,7 @@ function Gallery() {
         try {
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/characters`
+                '/api/characters'
             )
 
             if (!response.ok) {
@@ -98,7 +98,7 @@ function Gallery() {
         try {
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/characters/${id}/like`,
+                `/api/characters/${id}/like`,
                 {
                     method: 'PATCH'
                 }

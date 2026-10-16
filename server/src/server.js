@@ -23,9 +23,14 @@ app.use((req,res)=>{
     res.status(404).json({ success:false, error: "Route not found"});
 })
 
-app.listen(5000, () => {
-  console.log('Server running on http://localhost:5000');
-})
+if (require.main === module) {
+  const port = process.env.PORT || 5000
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`)
+  })
+}
+
+module.exports = app
 
 pool.query('SELECT NOW()',(err, result) => {
   if(err){

@@ -45,7 +45,7 @@ function Home() {
 
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/generate`,
+                '/api/generate',
                 {
                     method: "POST",
                     headers: {
@@ -109,7 +109,7 @@ function Home() {
         try {
 
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/characters`,
+                '/api/characters',
                 {
                     method: 'POST',
                     headers: {
