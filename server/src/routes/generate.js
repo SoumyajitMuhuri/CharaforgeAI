@@ -13,6 +13,10 @@ router.post('/', async (req, res) => {
     const { name, description, style, drawing } = req.body
 
     try {
+        if (!process.env.IMAGEKIT_PRIVATE_KEY) {
+            return res.status(503).json({ error: 'Image storage is not configured' })
+        }
+
         if (!name || !drawing) {
             return res.status(400).json({
                 error: 'Character name and drawing are required'
@@ -181,11 +185,34 @@ Do not mention AI, image generation, prompts, or the user.
                 contentType || 'image/png'
         }
 
-        // 8. Send generated image back to React
+        // 8. Store the generated image in ImageKit and send its URL back to React
+
+        const imageKitForm = new FormData()
+        imageKitForm.append('file', `data:${generatedImageType};base64,${generatedImageBase64}`)
+        imageKitForm.append(
+            'fileName',
+            `${name.trim().replace(/[^a-z0-9_-]+/gi, '-').slice(0, 60) || 'character'}-${Date.now()}.png`
+        )
+        imageKitForm.append('useUniqueFileName', 'true')
+
+        const imageKitResponse = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+            method: 'POST',
+            headers: {
+                Authorization: `Basic ${Buffer.from(`${process.env.IMAGEKIT_PRIVATE_KEY}:`).toString('base64')}`
+            },
+            body: imageKitForm
+        })
+
+        if (!imageKitResponse.ok) {
+            console.error('ImageKit upload failed:', imageKitResponse.status, await imageKitResponse.text())
+            return res.status(502).json({ error: 'Generated image could not be stored' })
+        }
+
+        const uploadedImage = await imageKitResponse.json()
 
         res.json({
             aiInfo,
-            image: `data:${generatedImageType};base64,${generatedImageBase64}`
+            image: uploadedImage.url
         })
 
     } catch (error) {

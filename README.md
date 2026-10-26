@@ -47,6 +47,7 @@ DATABASE_URL=postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
 GEMINI_API_KEY=your_gemini_api_key
 CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
 CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 PORT=5000
 ```
 
@@ -93,4 +94,4 @@ npm --prefix client run lint
 
 ## Deployment
 
-The repository includes a Vercel multi-service configuration. Set `DATABASE_URL`, `GEMINI_API_KEY`, `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN` in the deployment environment, and ensure the PostgreSQL schema has been applied before using gallery features.
+The repository includes a Vercel multi-service configuration. Set `DATABASE_URL`, `GEMINI_API_KEY`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, and `IMAGEKIT_PRIVATE_KEY` in the deployment environment, and ensure the PostgreSQL schema has been applied before using gallery features.
