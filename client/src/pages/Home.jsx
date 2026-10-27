@@ -372,7 +372,7 @@ function Home() {
 
                                 <AlertCircle
                                     size={42}
-                                    className="text-pink-500"
+                                    className="text-shadow-blue-950"
                                 />
 
                                 <p className="font-medium">
@@ -444,7 +444,7 @@ function Home() {
                                 <button
                                     onClick={handlePublish}
                                     disabled={isPublishing || generatedCharacter?.published}
-                                    className="flex items-center justify-center gap-2 rounded-lg bg-pink-500 px-4 py-2.5 font-medium text-white transition hover:bg-pink-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                    className="flex items-center justify-center gap-2 rounded-lg bg-blue-950 px-4 py-2.5 font-medium text-white transition hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {isPublishing
                                         ? 'Publishing...'
@@ -459,7 +459,6 @@ function Home() {
                                     className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 font-medium transition hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                                 >
                                     <Download size={18} />
-                                    Download
                                 </button>
 
                                 {publishError && (
