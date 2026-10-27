@@ -252,7 +252,7 @@ function Gallery() {
                         <button
                             onClick={fetchCharacters}
                             disabled={loading}
-                            className="flex items-center gap-2 rounded-lg bg-pink-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-pink-600 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex items-center gap-2 rounded-lg bg-blue-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-60"
                         >
 
                             <RefreshCw
@@ -285,7 +285,7 @@ function Gallery() {
 
                         <RefreshCw
                             size={32}
-                            className="animate-spin text-pink-500"
+                            className="animate-spin text-shadow-blue-950"
                         />
 
                     </div>

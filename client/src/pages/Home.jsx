@@ -3,8 +3,6 @@ import {
     AlertCircle,
     Download,
     LoaderCircle,
-    Share2,
-    WandSparkles,
 } from 'lucide-react'
 
 import DrawingCanvas from '../components/DrawingCanvas'
@@ -298,7 +296,7 @@ function Home() {
                     <button
                         onClick={handleGenerate}
                         disabled={isGenerating}
-                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-pink-500 px-5 py-3.5 font-semibold text-white transition hover:bg-pink-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-yellow-600 px-5 py-3.5 font-semibold text-white transition hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-60"
                     >
 
                         {isGenerating ? (
@@ -312,7 +310,6 @@ function Home() {
                             </>
                         ) : (
                             <>
-                                <WandSparkles size={20} />
 
                                 Generate Character
                             </>

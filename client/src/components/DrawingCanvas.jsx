@@ -156,7 +156,7 @@ function DrawingCanvas({ onDrawingChange }) {
                         onChange={(event) =>
                             setBrushSize(Number(event.target.value))
                         }
-                        className="min-w-20 max-w-65  flex-1 accent-pink-500"
+                        className="min-w-20 max-w-65  flex-1 accent-blue-950"
                     />
 
                     {/* Visual brush size */}
