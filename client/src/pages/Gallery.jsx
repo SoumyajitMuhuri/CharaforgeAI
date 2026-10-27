@@ -6,6 +6,9 @@ import {
     X
 } from 'lucide-react'
 
+const GALLERY_CACHE_TTL_MS = 60_000
+let galleryCache = null
+let galleryCacheUpdatedAt = 0
 
 function Gallery() {
 
@@ -16,7 +19,17 @@ function Gallery() {
     const [selectedCharacter, setSelectedCharacter] = useState(null)
 
 
-    async function fetchCharacters() {
+    async function fetchCharacters(force = false) {
+
+        const cacheIsFresh =
+            galleryCache && Date.now() - galleryCacheUpdatedAt < GALLERY_CACHE_TTL_MS
+
+        if (!force && cacheIsFresh) {
+            setCharacters(galleryCache)
+            setError(false)
+            setLoading(false)
+            return
+        }
 
         setLoading(true)
         setError(false)
@@ -37,6 +50,8 @@ function Gallery() {
                 (character) => character.published
             )
 
+            galleryCache = publishedCharacters
+            galleryCacheUpdatedAt = Date.now()
             setCharacters(publishedCharacters)
 
         } catch (error) {
@@ -117,6 +132,12 @@ function Gallery() {
                         : character
                 )
             )
+            galleryCache = galleryCache.map((character) =>
+                character.id === updatedCharacter.id
+                    ? updatedCharacter
+                    : character
+            )
+            galleryCacheUpdatedAt = Date.now()
 
             setSelectedCharacter(updatedCharacter)
 
@@ -250,7 +271,7 @@ function Gallery() {
                         {/* Refresh */}
 
                         <button
-                            onClick={fetchCharacters}
+                            onClick={() => fetchCharacters(true)}
                             disabled={loading}
                             className="flex items-center gap-2 rounded-lg bg-blue-950 px-3 py-2 text-sm font-medium text-white transition hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-60"
                         >
