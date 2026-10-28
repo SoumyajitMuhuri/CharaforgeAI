@@ -76,15 +76,20 @@ router.post('/', async (req, res) => {
 router.patch('/:id/like', async (req, res) => {
 
     const { id } = req.params;
+    const { liked } = req.body || {};
+
+    if (typeof liked !== 'boolean') {
+        return res.status(400).json({ error: 'A liked boolean is required' });
+    }
 
     try {
 
         const result = await pool.query(
             `UPDATE characters
-             SET likes = likes + 1
+             SET likes = GREATEST(0, likes + $2)
              WHERE id = $1
              RETURNING *`,
-            [id]
+            [id, liked ? 1 : -1]
         );
 
         if (result.rows.length === 0) {

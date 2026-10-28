@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
     ArrowDownUp,
     Heart,
@@ -17,6 +17,16 @@ function Gallery() {
     const [error, setError] = useState(false)
     const [sortBy, setSortBy] = useState('latest')
     const [selectedCharacter, setSelectedCharacter] = useState(null)
+    const [likedCharacterIds, setLikedCharacterIds] = useState(() => {
+        try {
+            const savedIds = JSON.parse(localStorage.getItem('charaforge-liked-characters') || '[]')
+            return Array.isArray(savedIds) ? savedIds.map(String) : []
+        } catch {
+            return []
+        }
+    })
+    const [pendingLikeIds, setPendingLikeIds] = useState([])
+    const pendingLikeIdsRef = useRef(new Set())
 
 
     async function fetchCharacters(force = false) {
@@ -71,6 +81,22 @@ function Gallery() {
         fetchCharacters()
     }, [])
 
+    useEffect(() => {
+        function syncLikedCharacters(event) {
+            if (event.key !== 'charaforge-liked-characters') return
+
+            try {
+                const savedIds = JSON.parse(event.newValue || '[]')
+                setLikedCharacterIds(Array.isArray(savedIds) ? savedIds.map(String) : [])
+            } catch {
+                setLikedCharacterIds([])
+            }
+        }
+
+        window.addEventListener('storage', syncLikedCharacters)
+        return () => window.removeEventListener('storage', syncLikedCharacters)
+    }, [])
+
 
     function sortCharacters(charactersToSort) {
 
@@ -109,13 +135,29 @@ function Gallery() {
 
 
     async function handleLike(id) {
+        const characterId = String(id)
+        if (pendingLikeIdsRef.current.size > 0) return
+
+        let savedLikedIds
+        try {
+            const savedIds = JSON.parse(localStorage.getItem('charaforge-liked-characters') || '[]')
+            savedLikedIds = Array.isArray(savedIds) ? savedIds.map(String) : []
+        } catch {
+            savedLikedIds = []
+        }
+
+        pendingLikeIdsRef.current.add(characterId)
+        setPendingLikeIds((previousIds) => [...previousIds, characterId])
+        const liked = savedLikedIds.includes(characterId)
 
         try {
 
             const response = await fetch(
                 `/api/characters/${id}/like`,
                 {
-                    method: 'PATCH'
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ liked: !liked })
                 }
             )
 
@@ -124,6 +166,13 @@ function Gallery() {
             }
 
             const updatedCharacter = await response.json()
+
+            const nextLikedIds = liked
+                ? savedLikedIds.filter((likedId) => likedId !== characterId)
+                : [...savedLikedIds, characterId]
+
+            setLikedCharacterIds(nextLikedIds)
+            localStorage.setItem('charaforge-liked-characters', JSON.stringify(nextLikedIds))
 
             setCharacters((previousCharacters) =>
                 previousCharacters.map((character) =>
@@ -145,6 +194,9 @@ function Gallery() {
 
             console.error(error)
 
+        } finally {
+            pendingLikeIdsRef.current.delete(characterId)
+            setPendingLikeIds((previousIds) => previousIds.filter((pendingId) => pendingId !== characterId))
         }
     }
 
@@ -475,12 +527,18 @@ function Gallery() {
                                                 selectedCharacter.id
                                             )
                                         }
-                                        className="flex items-center gap-2 rounded-lg bg-pink-500 px-4 py-2.5 font-medium text-white transition hover:bg-pink-600"
+                                        disabled={pendingLikeIds.includes(String(selectedCharacter.id))}
+                                        aria-pressed={likedCharacterIds.includes(String(selectedCharacter.id))}
+                                        className={`flex items-center gap-2 rounded-lg px-4 py-2.5 font-medium text-white transition disabled:cursor-wait disabled:opacity-60 ${
+                                            likedCharacterIds.includes(String(selectedCharacter.id))
+                                                ? 'bg-pink-500 hover:bg-pink-600'
+                                                : 'bg-gray-500 hover:bg-gray-600'
+                                        }`}
                                     >
 
                                         <Heart
                                             size={18}
-                                            fill="currentColor"
+                                            fill={likedCharacterIds.includes(String(selectedCharacter.id)) ? 'currentColor' : 'none'}
                                         />
 
                                         {selectedCharacter.likes}
